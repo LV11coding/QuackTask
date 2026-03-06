@@ -1,26 +1,26 @@
-let currentUser = null
+let currentUser=null
 
-let missions = JSON.parse(localStorage.getItem("missions")) || []
-let users = JSON.parse(localStorage.getItem("users")) || {}
-let knowledge = JSON.parse(localStorage.getItem("knowledge")) || []
+let missions=JSON.parse(localStorage.getItem("missions"))||[]
+let users=JSON.parse(localStorage.getItem("users"))||{}
+let knowledge=JSON.parse(localStorage.getItem("knowledge"))||[]
 
-function saveData(){
-localStorage.setItem("missions", JSON.stringify(missions))
-localStorage.setItem("users", JSON.stringify(users))
-localStorage.setItem("knowledge", JSON.stringify(knowledge))
+function save(){
+
+localStorage.setItem("missions",JSON.stringify(missions))
+localStorage.setItem("users",JSON.stringify(users))
+localStorage.setItem("knowledge",JSON.stringify(knowledge))
+
 }
 
 function login(){
 
-const name = document.getElementById("username").value
+const name=document.getElementById("username").value
 
-if(!name) return
+if(!name)return
 
-currentUser = name
+currentUser=name
 
-if(!users[name]){
-users[name] = 0
-}
+if(!users[name]) users[name]=0
 
 document.getElementById("app").style.display="block"
 
@@ -30,20 +30,22 @@ render()
 
 function addMission(){
 
-const title = document.getElementById("missionTitle").value
-const xp = parseInt(document.getElementById("missionXP").value)
+const title=document.getElementById("missionTitle").value
+const xp=parseInt(document.getElementById("missionXP").value)
 
-if(!title || !xp) return
+if(!title||!xp)return
 
-missions.push({
+missions.unshift({
+
 id:Date.now(),
-title:title,
-xp:xp,
+title,
+xp,
 comments:[],
 doneBy:[]
+
 })
 
-saveData()
+save()
 
 render()
 
@@ -51,15 +53,15 @@ render()
 
 function completeMission(id){
 
-const mission = missions.find(m=>m.id===id)
+let m=missions.find(x=>x.id===id)
 
-if(mission.doneBy.includes(currentUser)) return
+if(m.doneBy.includes(currentUser))return
 
-mission.doneBy.push(currentUser)
+m.doneBy.push(currentUser)
 
-users[currentUser]+=mission.xp
+users[currentUser]+=m.xp
 
-saveData()
+save()
 
 render()
 
@@ -67,16 +69,20 @@ render()
 
 function addComment(id){
 
-const text = document.getElementById("comment"+id).value
+let text=document.getElementById("comment"+id).value
 
-const mission = missions.find(m=>m.id===id)
+if(!text)return
 
-mission.comments.push({
+let m=missions.find(x=>x.id===id)
+
+m.comments.push({
+
 user:currentUser,
-text:text
+text
+
 })
 
-saveData()
+save()
 
 render()
 
@@ -87,9 +93,9 @@ function addResource(){
 const title=document.getElementById("knowledgeTitle").value
 const link=document.getElementById("knowledgeLink").value
 
-knowledge.push({title,link})
+knowledge.unshift({title,link})
 
-saveData()
+save()
 
 render()
 
@@ -97,16 +103,18 @@ render()
 
 function render(){
 
-const missionsDiv = document.getElementById("missions")
+const missionsDiv=document.getElementById("missions")
 
 missionsDiv.innerHTML=""
 
 missions.forEach(m=>{
 
-let commentsHTML=""
+let comments=""
 
 m.comments.forEach(c=>{
-commentsHTML+=`<div class="comment"><b>${c.user}</b>: ${c.text}</div>`
+
+comments+=`<div class="comment"><b>${c.user}</b>: ${c.text}</div>`
+
 })
 
 missionsDiv.innerHTML+=`
@@ -115,17 +123,19 @@ missionsDiv.innerHTML+=`
 
 <h3>${m.title}</h3>
 
-<p>XP: ${m.xp}</p>
+<p>Reward: ${m.xp} XP</p>
 
 <button onclick="completeMission(${m.id})">Complete</button>
 
-<h4>Comments</h4>
+${comments}
 
-${commentsHTML}
+<div class="commentBox">
 
-<input id="comment${m.id}" placeholder="Ask something">
+<input id="comment${m.id}" placeholder="Ask a question">
 
 <button onclick="addComment(${m.id})">Send</button>
+
+</div>
 
 </div>
 
@@ -142,13 +152,22 @@ function renderLeaderboard(){
 
 const div=document.getElementById("leaderboard")
 
-let sorted=Object.entries(users).sort((a,b)=>b[1]-a[1])
-
 div.innerHTML=""
+
+let sorted=Object.entries(users).sort((a,b)=>b[1]-a[1])
 
 sorted.forEach(u=>{
 
-div.innerHTML+=`<div>${u[0]} : ${u[1]} XP</div>`
+div.innerHTML+=`
+
+<div class="leader">
+
+<span>${u[0]}</span>
+<span>${u[1]} XP</span>
+
+</div>
+
+`
 
 })
 
