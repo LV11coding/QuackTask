@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>QuackQuest</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<h1>🦆 QuackQuest</h1>
+
+<div class="login">
+<input id="username" placeholder="Your name">
+<button onclick="login()">Login</button>
+</div>
+
+<div id="app" style="display:none">
+
+<h2>➕ Create Mission</h2>
+
+<input id="missionTitle" placeholder="Mission title">
+<input id="missionXP" placeholder="XP reward">
+<button onclick="addMission()">Add Mission</button>
+
+<h2>📋 Mission Board</h2>
+<div id="missions"></div>
+
+<h2>🏆 Leaderboard</h2>
+<div id="leaderboard"></div>
+
+<h2>📚 Knowledge Base</h2>
+
+<input id="knowledgeTitle" placeholder="Resource name">
+<input id="knowledgeLink" placeholder="Link">
+<button onclick="addResource()">Add</button>
+
+<div id="knowledge"></div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
