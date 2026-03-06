@@ -1,44 +1,90 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
 <meta charset="UTF-8">
 <title>QuackQuest</title>
+
 <link rel="stylesheet" href="style.css">
+
 </head>
 
 <body>
 
+<div class="container">
+
+<header>
+
 <h1>🦆 QuackQuest</h1>
 
 <div class="login">
-<input id="username" placeholder="Your name">
+<input id="username" placeholder="Enter your name">
 <button onclick="login()">Login</button>
 </div>
 
+</header>
+
 <div id="app" style="display:none">
 
-<h2>➕ Create Mission</h2>
+<section class="card">
+
+<h2>Create Mission</h2>
+
+<div class="formRow">
 
 <input id="missionTitle" placeholder="Mission title">
-<input id="missionXP" placeholder="XP reward">
+
+<input id="missionXP" placeholder="XP">
+
 <button onclick="addMission()">Add Mission</button>
 
-<h2>📋 Mission Board</h2>
+</div>
+
+</section>
+
+<section class="grid">
+
+<div class="card">
+
+<h2>Mission Board</h2>
+
 <div id="missions"></div>
 
-<h2>🏆 Leaderboard</h2>
+</div>
+
+<div class="card">
+
+<h2>Leaderboard</h2>
+
 <div id="leaderboard"></div>
 
-<h2>📚 Knowledge Base</h2>
+</div>
+
+</section>
+
+<section class="card">
+
+<h2>Knowledge Base</h2>
+
+<div class="formRow">
 
 <input id="knowledgeTitle" placeholder="Resource name">
+
 <input id="knowledgeLink" placeholder="Link">
+
 <button onclick="addResource()">Add</button>
 
+</div>
+
 <div id="knowledge"></div>
+
+</section>
+
+</div>
 
 </div>
 
 <script src="script.js"></script>
+
 </body>
 </html>
