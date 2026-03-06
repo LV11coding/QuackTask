@@ -1,5 +1,5 @@
 # QuackTask
-A website that's designed to make giving tasks to students and rewarding them easier.
+https://lv11coding.github.io/QuackTask/
 # Work in progress #
 # 🎯 QuackQuest: The Gamified Mentorship Hub
 
