@@ -12,7 +12,7 @@ mongoose.connect("mongodb+srv://PrimeUser:prime123Prime@mycluster.7gbfl7e.mongod
 const Mission = mongoose.model("Mission", {
 
 title:String,
-xp:Number
+xp:Number,
 comments: [{ user: String, text: String }]
 
 })
@@ -48,11 +48,25 @@ app.post("/missions/:id/complete", async (req, res) => {
   }
 });
 
+app.post("/missions/:id/comment", async (req, res) => {
+  const { user, text } = req.body;
+  const mission = await Mission.findById(req.params.id);
+  
+  if (mission) {
+    mission.comments.push({ user, text });
+    await mission.save();
+    res.json(mission);
+  } else {
+    res.status(404).json({ error: "Mission not found" });
+  }
+});
+
 const PORT = process.env.PORT || 3000
 
 app.listen(PORT, () => {
   console.log("Server running on port " + PORT)
 })
+
 
 
 
