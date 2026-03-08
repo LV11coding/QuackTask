@@ -2,7 +2,7 @@ const API_URL = "https://quacktask.onrender.com"
 
 let currentUser = null
 let missions = []
-let users = {}
+let users = []
 let knowledge = []
 
 function login(){
@@ -256,4 +256,5 @@ div.innerHTML+=`
 })
 
 }
+
 
