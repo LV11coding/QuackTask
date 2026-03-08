@@ -1,21 +1,22 @@
 const API_URL = "https://quacktask.onrender.com"
 
-let currentUser = null
 let missions = []
 let users = []
 let knowledge = []
+
 let currentUser = localStorage.getItem("quackUser");
 let lastLoginTime = localStorage.getItem("quackLoginTime");
 
 window.onload = function() {
+    loadData();
     if (currentUser && lastLoginTime) {
         const fiveMinutes = 5 * 60 * 1000;
         const now = new Date().getTime();
 
         if (now - lastLoginTime < fiveMinutes) {
             document.getElementById("app").style.display = "block";
-            document.getElementById("username").value = currentUser;
-            loadData();
+            const nameInput = document.getElementById("username");
+            if(nameInput) nameInput.value = currentUser;
         } else {
             logout();
         }
@@ -279,4 +280,5 @@ div.innerHTML+=`
 })
 
 }
+
 
