@@ -14,6 +14,11 @@ const Mission = mongoose.model("Mission", {
   comments: [{ user: String, text: String }]
 })
 
+const User = mongoose.model("User", {
+  name: String,
+  xp: { type: Number, default: 0 }
+})
+
 const Resource = mongoose.model("Resource", {
   title: String,
   link: String
@@ -31,11 +36,23 @@ app.post("/missions", async (req, res) => {
 })
 
 app.post("/missions/:id/complete", async (req, res) => {
-  const mission = await Mission.findByIdAndDelete(req.params.id)
-  if (mission) {
-    res.json({ message: "Completed" })
-  } else {
-    res.status(404).json({ error: "Not found" })
+  const { user: username } = req.body
+  
+  try {
+    const mission = await Mission.findById(req.params.id)
+    if (!mission) return res.status(404).json({ error: "Mission not found" })
+
+    await User.findOneAndUpdate(
+      { name: username },
+      { $inc: { xp: mission.xp } },
+      { upsert: true, new: true }
+    )
+    
+    await Mission.findByIdAndDelete(req.params.id)
+    
+    res.json({ message: "Mission completed and XP awarded!" })
+  } catch (err) {
+    res.status(500).json({ error: "Server error" })
   }
 })
 
@@ -46,7 +63,7 @@ app.post("/missions/:id/comment", async (req, res) => {
     await mission.save()
     res.json(mission)
   } else {
-    res.status(404).json({ error: "Not found" })
+    res.status(404).json({ error: "Mission not found" })
   }
 })
 
@@ -62,7 +79,8 @@ app.post("/knowledge", async (req, res) => {
 })
 
 app.get("/leaderboard", async (req, res) => {
-  res.json([]) 
+  const users = await User.find().sort({ xp: -1 })
+  res.json(users)
 })
 
 const PORT = process.env.PORT || 3000
