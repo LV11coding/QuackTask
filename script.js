@@ -256,10 +256,3 @@ div.innerHTML+=`
 })
 
 }
-
-setInterval(() => {
-    if (currentUser) {
-        loadData();
-    }
-}, 2000);
-
