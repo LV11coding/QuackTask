@@ -19,12 +19,16 @@ loadData()
 
 }
 
-async function loadData(){
-
-await loadMissions()
-await loadLeaderboard()
-await loadKnowledge()
-
+async function loadData() {
+    try {
+        await Promise.all([
+            loadMissions(),
+            loadLeaderboard(),
+            loadKnowledge()
+        ]);
+    } catch (error) {
+        console.error("Error loading data:", error);
+    }
 }
 
 async function loadMissions(){
@@ -252,3 +256,4 @@ div.innerHTML+=`
 })
 
 }
+
