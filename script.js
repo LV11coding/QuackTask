@@ -1,107 +1,166 @@
-let currentUser=null
+const API_URL = "https://quacktask.onrender.com"
 
-let missions=JSON.parse(localStorage.getItem("missions"))||[]
-let users=JSON.parse(localStorage.getItem("users"))||{}
-let knowledge=JSON.parse(localStorage.getItem("knowledge"))||[]
-
-function save(){
-
-localStorage.setItem("missions",JSON.stringify(missions))
-localStorage.setItem("users",JSON.stringify(users))
-localStorage.setItem("knowledge",JSON.stringify(knowledge))
-
-}
+let currentUser = null
+let missions = []
+let users = {}
+let knowledge = []
 
 function login(){
 
-const name=document.getElementById("username").value
+const name = document.getElementById("username").value
 
-if(!name)return
+if(!name) return
 
-currentUser=name
-
-if(!users[name]) users[name]=0
+currentUser = name
 
 document.getElementById("app").style.display="block"
 
-render()
+loadData()
 
 }
 
-function addMission(){
+async function loadData(){
 
-const title=document.getElementById("missionTitle").value
-const xp=parseInt(document.getElementById("missionXP").value)
+await loadMissions()
+await loadLeaderboard()
+await loadKnowledge()
 
-if(!title||!xp)return
+}
 
-missions.unshift({
+async function loadMissions(){
 
-id:Date.now(),
-title,
-xp,
-comments:[],
-doneBy:[]
+const res = await fetch(API_URL + "/missions")
+
+missions = await res.json()
+
+renderMissions()
+
+}
+
+async function addMission(){
+
+const title = document.getElementById("missionTitle").value
+const xp = parseInt(document.getElementById("missionXP").value)
+
+if(!title || !xp) return
+
+await fetch(API_URL + "/missions",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+title:title,
+xp:xp
 
 })
 
-save()
+})
 
-render()
-
-}
-
-function completeMission(id){
-
-let m=missions.find(x=>x.id===id)
-
-if(m.doneBy.includes(currentUser))return
-
-m.doneBy.push(currentUser)
-
-users[currentUser]+=m.xp
-
-save()
-
-render()
+loadMissions()
 
 }
 
-function addComment(id){
+async function completeMission(id){
 
-let text=document.getElementById("comment"+id).value
+await fetch(API_URL + "/missions/"+id+"/complete",{
 
-if(!text)return
+method:"POST",
 
-let m=missions.find(x=>x.id===id)
+headers:{
+"Content-Type":"application/json"
+},
 
-m.comments.push({
+body:JSON.stringify({
+
+user:currentUser
+
+})
+
+})
+
+loadData()
+
+}
+
+async function addComment(id){
+
+const text=document.getElementById("comment"+id).value
+
+if(!text) return
+
+await fetch(API_URL + "/missions/"+id+"/comment",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
 
 user:currentUser,
-text
+text:text
 
 })
 
-save()
+})
 
-render()
+loadMissions()
 
 }
 
-function addResource(){
+async function loadLeaderboard(){
+
+const res = await fetch(API_URL + "/leaderboard")
+
+users = await res.json()
+
+renderLeaderboard()
+
+}
+
+async function loadKnowledge(){
+
+const res = await fetch(API_URL + "/knowledge")
+
+knowledge = await res.json()
+
+renderKnowledge()
+
+}
+
+async function addResource(){
 
 const title=document.getElementById("knowledgeTitle").value
 const link=document.getElementById("knowledgeLink").value
 
-knowledge.unshift({title,link})
+await fetch(API_URL + "/knowledge",{
 
-save()
+method:"POST",
 
-render()
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+title,
+link
+
+})
+
+})
+
+loadKnowledge()
 
 }
 
-function render(){
+function renderMissions(){
 
 const missionsDiv=document.getElementById("missions")
 
@@ -111,11 +170,15 @@ missions.forEach(m=>{
 
 let comments=""
 
+if(m.comments){
+
 m.comments.forEach(c=>{
 
 comments+=`<div class="comment"><b>${c.user}</b>: ${c.text}</div>`
 
 })
+
+}
 
 missionsDiv.innerHTML+=`
 
@@ -125,15 +188,15 @@ missionsDiv.innerHTML+=`
 
 <p>Reward: ${m.xp} XP</p>
 
-<button onclick="completeMission(${m.id})">Complete</button>
+<button onclick="completeMission('${m._id}')">Complete</button>
 
 ${comments}
 
 <div class="commentBox">
 
-<input id="comment${m.id}" placeholder="Ask a question">
+<input id="comment${m._id}" placeholder="Ask a question">
 
-<button onclick="addComment(${m.id})">Send</button>
+<button onclick="addComment('${m._id}')">Send</button>
 
 </div>
 
@@ -143,9 +206,6 @@ ${comments}
 
 })
 
-renderLeaderboard()
-renderKnowledge()
-
 }
 
 function renderLeaderboard(){
@@ -154,16 +214,14 @@ const div=document.getElementById("leaderboard")
 
 div.innerHTML=""
 
-let sorted=Object.entries(users).sort((a,b)=>b[1]-a[1])
-
-sorted.forEach(u=>{
+users.forEach(u=>{
 
 div.innerHTML+=`
 
 <div class="leader">
 
-<span>${u[0]}</span>
-<span>${u[1]} XP</span>
+<span>${u.name}</span>
+<span>${u.xp} XP</span>
 
 </div>
 
