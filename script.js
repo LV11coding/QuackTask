@@ -4,19 +4,42 @@ let currentUser = null
 let missions = []
 let users = []
 let knowledge = []
+let currentUser = localStorage.getItem("quackUser");
+let lastLoginTime = localStorage.getItem("quackLoginTime");
 
-function login(){
+window.onload = function() {
+    if (currentUser && lastLoginTime) {
+        const fiveMinutes = 5 * 60 * 1000;
+        const now = new Date().getTime();
 
-const name = document.getElementById("username").value
+        if (now - lastLoginTime < fiveMinutes) {
+            document.getElementById("app").style.display = "block";
+            document.getElementById("username").value = currentUser;
+            loadData();
+        } else {
+            logout();
+        }
+    }
+};
 
-if(!name) return
+function login() {
+    const name = document.getElementById("username").value;
+    if (!name) return;
 
-currentUser = name
+    currentUser = name;
+    const now = new Date().getTime();
+    localStorage.setItem("quackUser", name);
+    localStorage.setItem("quackLoginTime", now);
 
-document.getElementById("app").style.display="block"
+    document.getElementById("app").style.display = "block";
+    loadData();
+}
 
-loadData()
-
+function logout() {
+    localStorage.removeItem("quackUser");
+    localStorage.removeItem("quackLoginTime");
+    currentUser = null;
+    document.getElementById("app").style.display = "none";
 }
 
 async function loadData() {
@@ -256,3 +279,4 @@ div.innerHTML+=`
 })
 
 }
+
