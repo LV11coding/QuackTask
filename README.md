@@ -24,12 +24,10 @@ In standard chat apps, important resources are buried under hundreds of messages
 * **Categorized Resources:** Links, tutorials, and documentation organized by topic.
 * **Persistence:** Critical information is always searchable and never "lost" in history.
 
-### 💬 Contextual Q&A (Threaded Discussions)
-To eliminate the confusion of a single "General Chat," the platform uses a threaded system:
-* **Mission-Specific Comments:** Every mission has its own dedicated discussion area.
-* **Clarity:** Questions are asked and answered directly where the task is located, keeping the technical context intact.
+### Questions
+Under each mission, you can ask a question and someone can answer. Works the same as a groupt chat, but it's separated for each mission.
 
 ---
 
 ## 🛠️ Technical Requirement: Live Connectivity
-The platform is designed to maintain a constant **online connection** between all users, enabling real-time updates for leaderboard shifts, new mission alerts, and instant feedback between mentors and students.
+Database server: MongoDB; Hosting the backend on: Render
