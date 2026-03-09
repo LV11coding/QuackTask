@@ -6,7 +6,9 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
-mongoose.connect("mongodb+srv://PrimeUser:prime123Prime@mycluster.7gbfl7e.mongodb.net/?appName=MyCluster")
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("Connected to MongoDB securely!"))
+  .catch(err => console.error("Could not connect to MongoDB:", err));
 
 const Mission = mongoose.model("Mission", {
   title: String,
@@ -87,3 +89,4 @@ const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
   console.log("Server running on port " + PORT)
 })
+
